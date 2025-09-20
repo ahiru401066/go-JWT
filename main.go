@@ -22,6 +22,7 @@ func main() {
 
 	r := gin.Default()
 	r.GET("/", handler.Hello)
+	r.POST("/user", handler.NewUser)
 
 	fmt.Println("Server is running on :8080...")
 	r.Run()
