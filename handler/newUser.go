@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"main/db"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -17,8 +18,18 @@ func NewUser(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"message": "BadRequest",
 		})
+		return
 	}
-	c.JSON(http.StatusOK, gin.H{
-		"message": request.Name + request.PassWord,
-	})
+
+	user := db.User{
+		Name:     request.Name,
+		Password: request.PassWord,
+	}
+
+	if err := db.Create(&user); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"message": "InternalServerError"})
+		return
+	}
+
+	c.JSON(http.StatusCreated, gin.H{"id": user.ID, "name": user.Name})
 }
