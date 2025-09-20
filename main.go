@@ -1,7 +1,16 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"main/handler"
+
+	"github.com/gin-gonic/gin"
+)
 
 func main() {
-	fmt.Println("hello world")
+	r := gin.Default()
+	r.GET("/", handler.Hello)
+
+	fmt.Println("Server is running on :8080...")
+	r.Run()
 }
