@@ -7,8 +7,8 @@ import (
 )
 
 type Request struct {
-	Name     string `json"name"`
-	PassWord string `json"password"`
+	Name     string `json:"name"`
+	PassWord string `json:"password"`
 }
 
 func NewUser(c *gin.Context) {
