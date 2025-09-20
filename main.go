@@ -2,12 +2,24 @@ package main
 
 import (
 	"fmt"
+	"main/db"
 	"main/handler"
 
 	"github.com/gin-gonic/gin"
+	"github.com/joho/godotenv"
 )
 
 func main() {
+	// .env読み込み
+	if err := godotenv.Load(); err != nil {
+		fmt.Println("Failed to load .env")
+	}
+
+	// db接続
+	if err := db.Init(); err != nil {
+		panic(err)
+	}
+
 	r := gin.Default()
 	r.GET("/", handler.Hello)
 
