@@ -7,12 +7,16 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+type UserHandler struct {
+	Repo db.UserRepository
+}
+
 type Request struct {
 	Name     string `json:"name"`
 	PassWord string `json:"password"`
 }
 
-func NewUser(c *gin.Context) {
+func (h *UserHandler) NewUser(c *gin.Context) {
 	var request Request
 	if err := c.ShouldBind(&request); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -26,7 +30,7 @@ func NewUser(c *gin.Context) {
 		Password: request.PassWord,
 	}
 
-	if err := db.Create(&user); err != nil {
+	if err := h.Repo.Create(&user); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"message": "InternalServerError"})
 		return
 	}

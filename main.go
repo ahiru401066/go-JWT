@@ -20,9 +20,12 @@ func main() {
 		panic(err)
 	}
 
+	userRepo := db.NewUserRepository(db.DB)
+	userHandler := &handler.UserHandler{Repo: userRepo}
+
 	r := gin.Default()
 	r.GET("/", handler.Hello)
-	r.POST("/user", handler.NewUser)
+	r.POST("/user", userHandler.NewUser)
 
 	fmt.Println("Server is running on :8080...")
 	r.Run()
