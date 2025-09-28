@@ -4,8 +4,11 @@ import (
 	"errors"
 	"main/db"
 	"net/http"
+	"os"
+	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/golang-jwt/jwt/v4"
 	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
 )
@@ -55,5 +58,27 @@ func (h *LoginHandler) Login(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusCreated, gin.H{"id": user.ID, "name": user.Name})
+	// JWT の作成
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
+		"sub": user.ID,
+		// 有効期限設定
+		"exp": time.Now().Add(time.Hour).Unix(),
+	})
+
+	// 秘密鍵で署名
+	tokenString, err := token.SignedString([]byte(os.Getenv("JWT_SECRET_KEY")))
+
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "Failed to create a token",
+		})
+		return
+	}
+
+	c.SetSameSite(http.SameSiteLaxMode)
+	c.SetCookie("Authorization", tokenString, 3600, "/", "", false, true)
+
+	c.JSON(http.StatusOK, gin.H{
+		"token": tokenString,
+	})
 }
