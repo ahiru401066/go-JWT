@@ -11,23 +11,23 @@ type UserHandler struct {
 	Repo db.UserRepository
 }
 
-type Request struct {
-	Name     string `json:"name"`
-	PassWord string `json:"password"`
-}
+func (h *UserHandler) SignUp(c *gin.Context) {
+	var body struct {
+		Name     string `json:"name"`
+		Password string `json:"password"`
+	}
 
-func (h *UserHandler) NewUser(c *gin.Context) {
-	var request Request
-	if err := c.ShouldBind(&request); err != nil {
+	if err := c.ShouldBind(&body); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"message": "BadRequest",
 		})
 		return
 	}
 
+	// user model
 	user := db.User{
-		Name:     request.Name,
-		Password: request.PassWord,
+		Name:     body.Name,
+		Password: body.Password,
 	}
 
 	if err := h.Repo.Create(&user); err != nil {
