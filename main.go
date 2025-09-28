@@ -22,10 +22,12 @@ func main() {
 
 	userRepo := db.NewUserRepository(db.DB)
 	userHandler := &handler.UserHandler{Repo: userRepo}
+	loginHandler := &handler.LoginHandler{Repo: userRepo}
 
 	r := gin.Default()
 	r.GET("/", handler.Hello)
 	r.POST("/register", userHandler.SignUp)
+	r.POST("/login", loginHandler.Login)
 
 	fmt.Println("Server is running on :8080...")
 	r.Run()
