@@ -8,6 +8,7 @@ import (
 
 type UserRepository interface {
 	Create(user *User) error
+	FindByUserName(name string) (*User, error)
 }
 
 func NewUserRepository(db *gorm.DB) UserRepository {
@@ -27,4 +28,13 @@ type GormUserRepository struct {
 
 func (r *GormUserRepository) Create(user *User) error {
 	return DB.Create(user).Error
+}
+
+func (r *GormUserRepository) FindByUserName(name string) (*User, error) {
+	var user User
+	result := DB.Where("name = ?", name).Find(&user)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+	return &user, nil
 }

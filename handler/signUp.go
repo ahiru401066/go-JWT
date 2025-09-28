@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"golang.org/x/crypto/bcrypt"
 )
 
 type UserHandler struct {
@@ -17,6 +18,7 @@ func (h *UserHandler) SignUp(c *gin.Context) {
 		Password string `json:"password"`
 	}
 
+	// body params を構造体にbind
 	if err := c.ShouldBind(&body); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"message": "BadRequest",
@@ -24,10 +26,18 @@ func (h *UserHandler) SignUp(c *gin.Context) {
 		return
 	}
 
+	// password をハッシュ化する
+	hash, err := bcrypt.GenerateFromPassword([]byte(body.Password), 10)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": "BadRequest",
+		})
+	}
+
 	// user model
 	user := db.User{
 		Name:     body.Name,
-		Password: body.Password,
+		Password: string(hash),
 	}
 
 	if err := h.Repo.Create(&user); err != nil {
