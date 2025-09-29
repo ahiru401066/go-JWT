@@ -2,6 +2,7 @@ package handler
 
 import (
 	"errors"
+	"fmt"
 	"main/db"
 	"net/http"
 	"os"
@@ -60,7 +61,7 @@ func (h *LoginHandler) Login(c *gin.Context) {
 
 	// JWT の作成
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"sub": user.ID,
+		"sub": fmt.Sprintf("%d", user.ID), // 文字列化
 		// 有効期限設定
 		"exp": time.Now().Add(time.Hour).Unix(),
 	})
