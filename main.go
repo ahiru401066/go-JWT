@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"main/db"
 	"main/handler"
+	"main/middleware"
 
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
@@ -28,6 +29,7 @@ func main() {
 	r.GET("/", handler.Hello)
 	r.POST("/register", userHandler.SignUp)
 	r.POST("/login", loginHandler.Login)
+	r.GET("/dashboard", middleware.Auth, handler.Dashboard)
 
 	fmt.Println("Server is running on :8080...")
 	r.Run()
